@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class Home extends StatefulWidget {
-  // final Map arguments;
-  const Home({Key? key}) : super(key: key);
+  final Map arguments;
+  const Home({Key? key, required this.arguments}) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();

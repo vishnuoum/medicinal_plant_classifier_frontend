@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:medicinal_plant_classifier/pages/home.dart';
+import 'package:medicinal_plant_classifier/pages/initPage.dart';
+import 'package:medicinal_plant_classifier/pages/login.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -23,9 +25,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.green,
       ),
       routes: {
-        "/home" : (context) => const Home(),
+        "/home" : (context) => Home(arguments: ModalRoute.of(context)!.settings.arguments as Map),
+        "/login" : (context) => Login(arguments: ModalRoute.of(context)!.settings.arguments as Map),
+        "/" : (context) => const InitPage()
       },
-      initialRoute: "/home",
+      initialRoute: "/",
     );
   }
 }
