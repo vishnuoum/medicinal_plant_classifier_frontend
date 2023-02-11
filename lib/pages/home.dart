@@ -2,6 +2,8 @@ import 'package:floating_action_bubble_custom/floating_action_bubble_custom.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:medicinal_plant_classifier/services/listService.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   final Map arguments;
@@ -13,8 +15,13 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
+  late SharedPreferences sharedPreferences;
   late Animation<double> _animation;
   late AnimationController _animationController;
+  bool loading = true;
+  String txt = "Loading";
+  String username = "";
+  late ListService listService;
 
   dynamic result = [
     {
@@ -27,6 +34,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
+    sharedPreferences = widget.arguments["sharedPreferences"];
+    listService = ListService(sharedPreferences.getString("url").toString());
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 260), vsync: this,
     );
@@ -35,8 +44,33 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         curve: Curves.easeInOut, parent: _animationController);
     _animation = Tween<double>(begin: 0, end: 1).animate(curvedAnimation);
 
+    loadData();
 
     super.initState();
+  }
+
+  void loadData() async {
+
+    var res = await listService.getUsername(id: sharedPreferences.getString("id").toString());
+    setState(() {
+      username = res == "error" ? "User" : res["name"];
+    });
+
+    res = await listService.fetchAllPlants();
+    if(res == "error") {
+      setState(() {
+        txt = "Something went wrong";
+      });
+      Future.delayed(const Duration(seconds: 5) , (){
+        loadData();
+      });
+    }
+    else{
+      setState(() {
+        loading = false;
+        result = res;
+      });
+    }
   }
 
   @override
@@ -50,7 +84,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       child: Scaffold(
         backgroundColor: Colors.white,
         extendBodyBehindAppBar: true,
-        body: NestedScrollView(
+        body: loading?Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 50,width: 50,child: CircularProgressIndicator(strokeWidth: 5,valueColor: AlwaysStoppedAnimation(Colors.green),),),
+              const SizedBox(height: 10,),
+              Text(txt)
+            ],
+          ),
+        ):NestedScrollView(
             floatHeaderSlivers: true,
             headerSliverBuilder: (BuildContext context,
                 bool innerBoxIsScrolled) {
@@ -58,7 +101,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 SliverAppBar(
                   toolbarHeight: 80,
                   floating: true,
-                  title: const Text("Hello User", style: TextStyle(
+                  title: Text("Hello $username", style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 27,
                       color: Colors.black),),
@@ -76,6 +119,10 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                           Icons.more_vert_rounded, color: Colors.black,
                           size: 25),
                       onSelected: (String value) {
+                        if(value=="Logout") {
+                          sharedPreferences.clear();
+                          Navigator.pushReplacementNamed(context, "/",arguments: widget.arguments);
+                        }
                         print(value);
                       },
                       itemBuilder: (BuildContext context) {
@@ -102,7 +149,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       fontWeight: FontWeight.bold, fontSize: 20),),
                 ),
                 GridView.builder(
-                  padding: EdgeInsets.only(top: 10),
+                  padding: const EdgeInsets.only(top: 10),
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: 10,
@@ -152,14 +199,15 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                     crossAxisAlignment: CrossAxisAlignment
                                         .start,
                                     children: [
-                                      Text(result[index]["plant"],
+                                      Text(result[index]["name"],
                                         style: const TextStyle(fontSize: 20,
                                             fontWeight: FontWeight.bold),),
                                       const SizedBox(height: 5,),
                                       Text(
-                                        "${result[index]["scientific"]}/Kg",
+                                        "${result[index]["scientific"]}",
                                         style: const TextStyle(
-                                            fontSize: 17),),
+                                          color: Colors.grey,
+                                            fontSize: 15),),
                                       // Text(result[index]['username'],style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
                                       // Text(result[index]['place'],style: TextStyle(fontSize: 15),),
                                       // Text(result[index]["district"],style: TextStyle(fontSize: 15),)
@@ -172,7 +220,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               ],
             ),
         ),
-        floatingActionButton: FloatingActionBubble(
+        floatingActionButton: loading?const SizedBox():FloatingActionBubble(
           animation: _animation,
           onPressed: () =>
           _animationController.isCompleted

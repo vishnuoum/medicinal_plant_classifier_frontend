@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:medicinal_plant_classifier/services/loginService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Login extends StatefulWidget {
-  final Map arguments;
+import '../services/loginService.dart';
 
-  const Login({Key? key, required this.arguments}) : super(key: key);
+class Signup extends StatefulWidget {
+  final Map arguments;
+  const Signup({Key? key, required this.arguments}) : super(key: key);
 
   @override
-  State<Login> createState() => _LoginState();
+  State<Signup> createState() => _SignupState();
 }
 
-class _LoginState extends State<Login> {
-  
+class _SignupState extends State<Signup> {
   late LoginService loginService;
   late SharedPreferences sharedPreferences;
-
+  TextEditingController username = TextEditingController();
   TextEditingController phone = TextEditingController();
   TextEditingController password = TextEditingController();
 
@@ -121,7 +120,7 @@ class _LoginState extends State<Login> {
               const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Login",
+                  "Signup",
                   style: TextStyle(
                       color: Colors.green,
                       fontSize: 30,
@@ -133,7 +132,24 @@ class _LoginState extends State<Login> {
               ),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.grey[200]),
+                child: TextField(
+                  controller: username,
+                  focusNode: null,
+                  style: const TextStyle(color: Colors.black),
+                  decoration: const InputDecoration(
+                      border: InputBorder.none, hintText: 'Username'),
+                ),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              Container(
+                padding:
+                const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.grey[200]),
@@ -151,7 +167,7 @@ class _LoginState extends State<Login> {
               ),
               Container(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.grey[200]),
@@ -170,9 +186,9 @@ class _LoginState extends State<Login> {
               TextButton(
                 onPressed: () async {
                   showLoading(context);
-                  if (phone.text.isNotEmpty && password.text.isNotEmpty) {
-                    var result = await loginService.validate(
-                        phone: phone.text, password: password.text);
+                  if (username.text.isNotEmpty && phone.text.isNotEmpty && password.text.isNotEmpty) {
+                    var result = await loginService.register(
+                        username: username.text ,phone: phone.text, password: password.text);
                     if (result != "error" && result != "netError") {
                       print(result);
                       if (context.mounted) {
@@ -205,7 +221,7 @@ class _LoginState extends State<Login> {
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.all(18)),
                 child: const Text(
-                  "Login",
+                  "Signup",
                   style: TextStyle(fontSize: 17),
                 ),
               ),
@@ -215,14 +231,14 @@ class _LoginState extends State<Login> {
               Align(
                 child: GestureDetector(
                   child: const Text(
-                    "Signup",
+                    "Login",
                     style: TextStyle(
                         fontSize: 16,
                         color: Colors.green,
                         decoration: TextDecoration.underline),
                   ),
                   onTap: () {
-                    Navigator.pushReplacementNamed(context, "/signup", arguments: widget.arguments);
+                    Navigator.pushReplacementNamed(context, "/login", arguments: widget.arguments);
                   },
                 ),
               )
