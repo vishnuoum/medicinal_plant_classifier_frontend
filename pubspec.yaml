@@ -39,6 +39,7 @@ dependencies:
   floating_action_bubble_custom: ^1.0.0+2
   shared_preferences: ^2.0.17
   http: ^0.13.5
+  image_picker: ^0.8.6+1
 
 dev_dependencies:
   flutter_test:

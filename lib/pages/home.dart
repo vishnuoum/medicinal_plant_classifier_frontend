@@ -2,6 +2,7 @@ import 'package:floating_action_bubble_custom/floating_action_bubble_custom.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:medicinal_plant_classifier/pages/selection.dart';
 import 'package:medicinal_plant_classifier/services/listService.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -102,16 +103,19 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   toolbarHeight: 80,
                   floating: true,
                   title: Text("Hello $username", style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 27,
-                      color: Colors.black),),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 27,
+                    color: Colors.black),),
                   systemOverlayStyle: const SystemUiOverlayStyle(
-                      statusBarIconBrightness: Brightness.dark
+                    statusBarIconBrightness: Brightness.dark,
+                    statusBarColor: Colors.white
                   ),
                   elevation: 0,
                   backgroundColor: Colors.white,
                   actions: [
-                    IconButton(onPressed: () {},
+                    IconButton(onPressed: () {
+                      Navigator.pushNamed(context, "/search", arguments: {"listService":listService,"sharedPreferences":sharedPreferences});
+                    },
                       icon: const Icon(Icons.search),
                       color: Colors.black,),
                     PopupMenuButton<String>(
@@ -120,7 +124,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                           size: 25),
                       onSelected: (String value) {
                         if(value=="Logout") {
-                          sharedPreferences.clear();
+                          sharedPreferences.remove("id");
                           Navigator.pushReplacementNamed(context, "/",arguments: widget.arguments);
                         }
                         print(value);
@@ -174,7 +178,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                 Expanded(
                                     child: GestureDetector(
                                       onTap: () {
-                                        // showPic(context, result[index]["pic"].replaceAll("http://10.0.2.2:3000",url));
+                                        Navigator.pushNamed(context, "/plant", arguments: {"data":result[index],"sharedPreferences":sharedPreferences});
                                       },
                                       child: Container(
                                         width: double.infinity,
@@ -240,6 +244,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               icon: CupertinoIcons.leaf_arrow_circlepath,
               onPressed: () {
                 _animationController.reverse();
+                if(context.mounted){
+                  // Navigator.pushNamed(context, "/selection", arguments: widget.arguments);
+                  showCupertinoModalPopup(context: context, builder:
+                      (context) => Selection(arguments: widget.arguments)
+                  );
+                }
               },
               style: const TextStyle(fontSize: 16, color: Colors.green),
             ),

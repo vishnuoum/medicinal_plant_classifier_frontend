@@ -24,9 +24,26 @@ class ListService {
     }
   }
   
-  Future<dynamic> fetchAllPlants() async {
+  Future<dynamic> fetchAllPlants({String q=""}) async {
     try {
-      Response response = await get(Uri.parse("$url/getPlants"));
+      Response response = await get(Uri.parse("$url/getPlants?q=$q"));
+      print(response.body);
+      if (response.body != "Error") {
+        return jsonDecode(response.body);
+      }
+      else {
+        return "error";
+      }
+    }
+    on Exception catch (_, e) {
+      print(e);
+      return "error";
+    }
+  }
+
+  Future<dynamic> getPurpose({required int id}) async {
+    try {
+      Response response = await get(Uri.parse("$url/getPurpose?id=$id"),);
       print(response.body);
       if (response.body != "Error") {
         return jsonDecode(response.body);
