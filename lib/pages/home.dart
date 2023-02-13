@@ -260,6 +260,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               icon: Icons.local_hospital_outlined,
               onPressed: () {
                 _animationController.reverse();
+                Navigator.pushNamed(context, "/nearby", arguments: widget.arguments);
               },
               style: const TextStyle(fontSize: 16, color: Colors.green),
             ),
