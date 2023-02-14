@@ -156,13 +156,12 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   padding: const EdgeInsets.only(top: 10),
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
-                  itemCount: 10,
+                  itemCount: result.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     childAspectRatio: 8.0 / 12.0,
                     crossAxisCount: 2,
                   ),
                   itemBuilder: (BuildContext context, int index) {
-                    index = 0;
                     return Padding(
                         padding: const EdgeInsets.all(5),
                         child: Card(

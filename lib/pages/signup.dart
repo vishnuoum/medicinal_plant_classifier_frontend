@@ -99,9 +99,10 @@ class _SignupState extends State<Signup> {
           elevation: 0,
           actions: [
             IconButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, "/setURLPage",
+                onPressed: () async {
+                  await Navigator.pushNamed(context, "/setURLPage",
                       arguments: widget.arguments);
+                  loginService.url = sharedPreferences.getString("url").toString();
                 },
                 icon: const Icon(Icons.list_alt))
           ],
@@ -189,7 +190,7 @@ class _SignupState extends State<Signup> {
                   if (username.text.isNotEmpty && phone.text.isNotEmpty && password.text.isNotEmpty) {
                     var result = await loginService.register(
                         username: username.text ,phone: phone.text, password: password.text);
-                    if (result != "error" && result != "netError") {
+                    if (result != "error" && result != "netError" && result != "exists") {
                       print(result);
                       if (context.mounted) {
                         sharedPreferences.setString("id", result["id"]);
@@ -197,6 +198,12 @@ class _SignupState extends State<Signup> {
                         Navigator.pushReplacementNamed(context, "/",
                             arguments: widget.arguments);
                       }
+                    } else if (result == "exists") {
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      }
+                      alertDialog(
+                          "Account already exists. Please login");
                     } else if (result == "netError") {
                       if (context.mounted) {
                         Navigator.pop(context);

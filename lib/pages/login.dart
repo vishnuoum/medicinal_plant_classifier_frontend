@@ -100,9 +100,10 @@ class _LoginState extends State<Login> {
           elevation: 0,
           actions: [
             IconButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, "/setURLPage",
+                onPressed: () async {
+                  await Navigator.pushNamed(context, "/setURLPage",
                       arguments: widget.arguments);
+                  loginService.url = sharedPreferences.getString("url").toString();
                 },
                 icon: const Icon(Icons.list_alt))
           ],

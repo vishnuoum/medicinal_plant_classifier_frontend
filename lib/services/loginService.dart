@@ -37,8 +37,10 @@ class LoginService {
     try {
       Response response = await post(Uri.parse("$url/signup"),
           body: {"username" : username,"phone": phone, "password": password});
-
-      if (response.body != "Error") {
+      if (response.body == "Exists") {
+        return "exists";
+      }
+      else if (response.body != "Error") {
         return jsonDecode(response.body);
       }
       else {
