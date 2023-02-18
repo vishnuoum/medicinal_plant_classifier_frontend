@@ -129,8 +129,6 @@ class _SearchState extends State<Search> {
           child: Text("No results to display",style: TextStyle(color: Colors.grey, fontSize: 20),),
         ):GridView.builder(
           padding: const EdgeInsets.only(top: 10),
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
           itemCount: result.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             childAspectRatio: 8.0 / 12.0,
