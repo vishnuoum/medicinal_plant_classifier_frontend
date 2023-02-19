@@ -121,7 +121,7 @@ class _SelectionState extends State<Selection> {
                           if(context.mounted) {
                             Navigator.pop(context);
                           }
-                          if(result=="error") {
+                          if(result=="error" || result == "netError") {
                             alertDialog("Something went wrong. Try again later");
                           }
                           else if(result == "No Leaf") {
@@ -164,7 +164,7 @@ class _SelectionState extends State<Selection> {
                           if(context.mounted) {
                             Navigator.pop(context);
                           }
-                          if(result=="error") {
+                          if(result=="error" || result == "netError") {
                             alertDialog("Something went wrong. Try again later");
                           }
                           else if(result == "No Leaf") {

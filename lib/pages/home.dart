@@ -86,13 +86,19 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         backgroundColor: Colors.white,
         extendBodyBehindAppBar: true,
         body: loading?Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 50,width: 50,child: CircularProgressIndicator(strokeWidth: 5,valueColor: AlwaysStoppedAnimation(Colors.green),),),
-              const SizedBox(height: 10,),
-              Text(txt)
-            ],
+          child: GestureDetector(
+            onLongPress: () async{
+              await Navigator.pushNamed(context, "/setURLPage",arguments: widget.arguments);
+              listService.url = sharedPreferences.getString("url").toString();
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 50,width: 50,child: CircularProgressIndicator(strokeWidth: 5,valueColor: AlwaysStoppedAnimation(Colors.green),),),
+                const SizedBox(height: 10,),
+                Text(txt)
+              ],
+            ),
           ),
         ):NestedScrollView(
             floatHeaderSlivers: true,
@@ -127,10 +133,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                           sharedPreferences.remove("id");
                           Navigator.pushReplacementNamed(context, "/",arguments: widget.arguments);
                         }
+                        else if(value ==  "Set URL") {
+                          Navigator.pushNamed(context, "/setURLPage", arguments: widget.arguments);
+                          listService.url = sharedPreferences.getString("url").toString();
+                        }
                         print(value);
                       },
                       itemBuilder: (BuildContext context) {
-                        return {'Logout'}.map((String choice) {
+                        return {"Set URL", 'Logout'}.map((String choice) {
                           return PopupMenuItem<String>(
                             value: choice,
                             child: Text(choice),

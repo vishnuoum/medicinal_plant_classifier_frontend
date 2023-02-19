@@ -26,6 +26,7 @@ class ListService {
   
   Future<dynamic> fetchAllPlants({String q=""}) async {
     try {
+      print(url);
       Response response = await get(Uri.parse("$url/getPlants?q=$q"));
       print(response.body);
       if (response.body != "Error") {
